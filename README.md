@@ -1,19 +1,14 @@
 ## 🔥❄💧 ELEMENT BATTLE GAME SHEET
 
+### Summery
+
+A single-player battle strategy game where you face off against an AI using elemental attacks and defenses. Choose your actions wisely to outsmart your opponent and claim victory.
+
 ### 🎮 OBJECTIVE
 
 Reduce your opponent’s **health** to **0** using elemental attacks while defending your own.
 
 ---
-
-### 🧊 ELEMENT TYPES
-
-- **🔥 Fire**
-    
-- **❄ Ice**
-    
-- **💧 Water**
-    
 
 **Element Strengths:**
 
@@ -50,27 +45,14 @@ Each turn, choose **1 action** and **1 defense element**.
 
 ---
 
-### ⚔️ ATTACK EFFECTIVENESS
-
-#### Attack Modifiers:
-
-|Match Type|Damage Multiplier|
-|---|---|
-|Strong vs Weak|1.5x|
-|Normal Match|1x|
-|Same as Defense|0 (no damage)|
-
-_Example:_ A **Small Attack** (2 damage) with a strong element match would deal **3 damage** (2 × 1.5).
-
----
-
 ### 🛡️ DEFENSE EFFECTIVENESS
 
-|Defense vs Attack Match|Effect|
-|---|---|
-|Same Element|No damage taken|
-|Weak to Attack|Full damage taken|
-|Normal Element|50% damage taken|
+| Defense vs Attack Match | Effect            |
+| ----------------------- | ----------------- |
+| Same Element            | Full damage taken |
+| Weaker Element          | Full damage taken |
+| Stronger Element        | 50% damage taken  |
+
 
 ---
 
