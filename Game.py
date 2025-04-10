@@ -1,15 +1,3 @@
-"""
-
-
-AI extends the player class 
-    __init__()
-    chooseaction() uses choose() to pick actions
-    `fit(state, action, reward, next_state)`
-    `update_q_value(state, action, reward, next_state)`
-    player - ai controlls a player
-
-"""
-
 from enum import Enum
 import math
 
@@ -86,6 +74,7 @@ class Game:
             print("          ")
             print("          ")
 
+        #print what attacks and blocks were used
         if string == "Attacks":
             p1_action, p1_element, p1_level, p1_defense = self.player1.get_actions()
             p2_action, p2_element, p2_level, p2_defense = self.player2.get_actions()
@@ -110,23 +99,34 @@ class Game:
                 else:
                     print(f"{self.player1.get_name()} defends with a {p1_defense.Print()} defense")
 
+        #prints the damage both players take after the attacks
         if "Damage" in string:
             p1_health = self.player1.get_health()
             print(f"{self.player1.get_name()} takes {string[2]} damage. Health now {p1_health}.")
             p2_health = self.player2.get_health()
             print(f"{self.player2.get_name()} takes {string[1]} damage. Health now {p2_health}.")
-            
+
+    def is_game_over(self):
+        p1_health = self.player1.get_health()
+        p2_health= self.player2.get_health()
+        if p1_health == 0 and p2_health ==0:
+            print("gameover tie")
+            return 1
+        elif p1_health == 0:
+            print("gameover p2 wins")
+            return 1
+        elif p2_health == 0:
+            print("gameover p1 wins")
+            return 1
+        else: return 0
+
             
         
-
     def choose(self):
         self.display("line")
         print("Choosing actions:")
         self.player1.choose_action()
-        self.display("line")
-        self.display("line")
-        self.display("line")
-        self.display("line")
+        for _ in range(4): self.display("line")
         self.player2.choose_action()
         self.battle()
 
@@ -136,47 +136,41 @@ class Game:
         p1_action, p1_element, p1_level, p1_defense = self.player1.get_actions()
         p2_action, p2_element, p2_level, p2_defense = self.player2.get_actions()
         
+        #saves the block type if any
         if p1_action == Actions.Block:p1_block = p1_element
         else: p1_block = Elements.Null
-
         if p2_action == Actions.Block:p2_block = p2_element
         else: p2_block = Elements.Null
 
-        self.display("Attacks",)
-        
-
+        self.display("Attacks")
+    
+        #calculate and inflict damage 
         p1_attack = math.floor(p1_level.damage() / p1_element.attacks(p2_defense)) / p1_element.attacks(p2_block)
         self.player2.take_damage(p1_attack)
         p2_attack = math.floor(p2_level.damage() / p2_element.attacks(p1_defense)) / p2_element.attacks(p1_block)
         self.player1.take_damage(p2_attack)
+
         attacks= "Damage",p1_attack, p2_attack
         self.display(attacks)
         
-
-        p1_health = self.player1.get_health()
-        p2_health= self.player2.get_health()
-        if p1_health == 0 and p2_health ==0:
-            return print("gameover tie")
-        elif p1_health == 0:
-            return print("gameover p2 wins")
-        elif p2_health == 0:
-            return print("gameover p1 wins")
-        else:
+        #get health and check winner
+        if self.is_game_over():
+            return
 
 
-            self.player1.update_energy(p1_level.energy())
-            self.player2.update_energy(p2_level.energy())
+        self.player1.update_energy(p1_level.energy())
+        self.player2.update_energy(p2_level.energy())
 
-            if p1_action == Actions.Heal:
-                self.player1.heal()
-                p1_health = self.player1.get_health()
-                print(f"{self.player1.get_name()} heals. Health now {p1_health}.")
-            if p2_action == Actions.Heal:
-                self.player2.heal()
-                p2_health= self.player2.get_health()
-                print(f"{self.player2.get_name()} heals. Health now {p2_health}.")
+        if p1_action == Actions.Heal:
+            self.player1.heal()
+            p1_health = self.player1.get_health()
+            print(f"{self.player1.get_name()} heals. Health now {p1_health}.")
+        if p2_action == Actions.Heal:
+            self.player2.heal()
+            p2_health= self.player2.get_health()
+            print(f"{self.player2.get_name()} heals. Health now {p2_health}.")
 
-            self.choose()
+        self.choose()
 
 
 
@@ -255,7 +249,15 @@ class Player:
 
 
 
+"""
+AI extends the player class 
+    __init__()
+    chooseaction() uses choose() to pick actions
+    `fit(state, action, reward, next_state)`
+    `update_q_value(state, action, reward, next_state)`
+    player - ai controlls a player
 
+"""
 class AIPlayer:# make a list of oponents moves and uppdate it in battle phase  
     def __init__(self, name):
         self.player = Player(name)
