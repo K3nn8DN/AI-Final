@@ -306,14 +306,18 @@ class AIPlayer:# make a list of oponents moves and uppdate it in battle phase
         if state != 0:
             self.state = state
 
-    def generate_actions(energy=5):
+    def generate_actions(self, energy=5):
         actions = []
         for defense in [1, 2, 3]:
 
             # Attack
-            for element in [1, 2, 3]:  
-                for size in [1, 2]:    
-                    actions.append([defense,1, element, size])
+            if energy > 0:
+                for element in [1, 2, 3]:  
+                    if energy > 2:
+                        for size in [1, 2]:    
+                            actions.append([defense,1, element, size])
+                    else:
+                        actions.append([defense,1, element, 1])
 
             #Heal
             actions.append([defense,2])  
@@ -322,28 +326,24 @@ class AIPlayer:# make a list of oponents moves and uppdate it in battle phase
             for element in [1, 2, 3]:  
                 actions.append([defense,3, element])
 
-        # Return the actions that can be taken based on energy
-        if energy < 3:
-            None
-        if energy <1:
-            None
         return actions
 
     
     def choose_action(self):
         health, energy = self.get_state()
-        opponent_health, opponent_energy = self.game.get_state()
+        opponent_health, opponent_energy = self.game.get_state(self.player)
         self.state = (health, energy, opponent_health, opponent_energy)
         actions = self.generate_actions(energy)
 
 
         # Initialize Q-values if they don't exist for the current state
         if self.state not in self.q_table:
-            self.q_table[self.state] = [0] * actions.size()  
+            self.q_table[self.state] = [0] * len(actions)  
 
 
         # Apply epsilon-greedy policy
-        if np.random.rand() < self.epsilon:
+        #if np.random.rand() < self.epsilon:
+        if 1 < 2:
             action_index = np.random.choice(actions)
         else:
             q_values = self.q_table[self.state]
