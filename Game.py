@@ -66,7 +66,15 @@ class Game:
     def __init__(self, player1, player2):
         self.player1 = player1
         self.player2 = player2
+
+    def start(self):
         self.choose()
+
+    def get_state(self, player):
+        if player == self.player1:
+            return self.player2.get_state()
+        else:
+            return self.player1.get_state()
 
     def display(self, string):
         if string == "line":
@@ -170,6 +178,9 @@ class Game:
             p2_health= self.player2.get_health()
             print(f"{self.player2.get_name()} heals. Health now {p2_health}.")
 
+        self.player1.fit()
+        self.player2.fit()
+
         self.choose()
 
 
@@ -230,13 +241,16 @@ class Player:
         self.health = max(0, self.health - amount)
         
     def heal(self):
-        self.health = self.health + 1
+        self.health = min(10, self.health + 2)
 
     def update_energy(self, amount):
         self.energy = min(5, self.energy - amount + 1)
 
     def get_health(self):
         return self.health
+    
+    def get_state(self):
+        return self.health, self.energy
 
     def get_actions(self):
         return self.action
@@ -244,31 +258,24 @@ class Player:
     def get_name(self):
         return self.name
     
+    def fit():
+        None
+    
 
 
 
-
-
-"""
-AI extends the player class 
-    __init__()
-    chooseaction() uses choose() to pick actions
-    `fit(state, action, reward, next_state)`
-    `update_q_value(state, action, reward, next_state)`
-    player - ai controlls a player
-
-"""
+import numpy as np
 class AIPlayer:# make a list of oponents moves and uppdate it in battle phase  
-    def __init__(self, name):
+    def __init__(self, name, learning_rate=0.1, factor=0.95, epsilon=0.1):
         self.player = Player(name)
-
-    def choose_action(self):
-        if self.player.energy >= 3:
-            action = "Big Attack"
-        else:
-            action = "Small Attack"
-        print(f"{self.player.name} (AI) chooses {action}")
-        return action
+        self.state_size = 4356
+        self.action_size=30
+        self.q_table = {}
+        self.learning_rate=learning_rate
+        self.factor=factor
+        self.epsilon=epsilon
+        self.game=None
+        self.state =None
 
     def take_damage(self, amount):
         self.player.take_damage(amount)
@@ -281,12 +288,81 @@ class AIPlayer:# make a list of oponents moves and uppdate it in battle phase
 
     def get_health(self):
         return self.player.get_health()
+    
+    def get_state(self):
+        return self.player.get_state()
 
     def get_actions(self):
         return self.player.get_actions()
     
     def get_name(self):
         return self.player.get_name()
+    
+    def set_game(self, game):
+        self.game = game
+    
+
+    def fit(self,action,reward, next_state, state=0,):
+        if state != 0:
+            self.state = state
+
+    def generate_actions(energy=5):
+        actions = []
+        for defense in [1, 2, 3]:
+
+            # Attack
+            for element in [1, 2, 3]:  
+                for size in [1, 2]:    
+                    actions.append([defense,1, element, size])
+
+            #Heal
+            actions.append([defense,2])  
+
+            #Defend
+            for element in [1, 2, 3]:  
+                actions.append([defense,3, element])
+
+        # Return the actions that can be taken based on energy
+        if energy < 3:
+            None
+        if energy <1:
+            None
+        return actions
+
+    
+    def choose_action(self):
+        health, energy = self.get_state()
+        opponent_health, opponent_energy = self.game.get_state()
+        self.state = (health, energy, opponent_health, opponent_energy)
+        actions = self.generate_actions(energy)
+
+
+        # Initialize Q-values if they don't exist for the current state
+        if self.state not in self.q_table:
+            self.q_table[self.state] = [0] * actions.size()  
+
+
+        # Apply epsilon-greedy policy
+        if np.random.rand() < self.epsilon:
+            action_index = np.random.choice(actions)
+        else:
+            q_values = self.q_table[self.state]
+            action_index = max(actions, key=lambda action: q_values[action])  
+
+        return self.q_table[self.state][action_index]
+          
+    
+
+
+
+
+
+
+
+
+
+    
+
 
 
 
@@ -302,7 +378,9 @@ def main():
     ai = AIPlayer("AI Bob")
     player = Player("Bob")
     player2= Player("cat")
-    game = Game(player, player2)  
+    game = Game(ai, player2)  
+    ai.set_game(game)
+    game.start()
 
 
 if __name__ == "__main__":
