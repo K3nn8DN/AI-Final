@@ -343,34 +343,22 @@ class AIPlayer:# make a list of oponents moves and uppdate it in battle phase
 
 
         # Apply epsilon-greedy policy
-        #if np.random.rand() < self.epsilon:
-        if 1 < 2:
+        if np.random.rand() < self.epsilon:
             action_index = np.random.choice(len(actions))
         else:
             q_values = self.q_table[self.state]
-            action_index = max(actions, key=lambda action: q_values[action])  
+            action_index = 0
+            best_q_value = q_values[0]
+
+            for i in range(self.action_size):  
+                if q_values[i] > best_q_value:
+                    best_q_value = q_values[i]
+                    action_index = i
+
 
         self.action = actions[action_index]
           
     
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
 
 
 
