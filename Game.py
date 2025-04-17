@@ -178,8 +178,8 @@ class Game:
             p2_health= self.player2.get_health()
             print(f"{self.player2.get_name()} heals. Health now {p2_health}.")
 
-        self.player1.fit()
-        self.player2.fit()
+        #self.player1.fit()
+        #self.player2.fit()
 
         self.choose()
 
@@ -293,7 +293,7 @@ class AIPlayer:# make a list of oponents moves and uppdate it in battle phase
         return self.player.get_state()
 
     def get_actions(self):
-        return self.player.get_actions()
+        return self.action
     
     def get_name(self):
         return self.player.get_name()
@@ -315,18 +315,19 @@ class AIPlayer:# make a list of oponents moves and uppdate it in battle phase
                 for element in [1, 2, 3]:  
                     if energy > 2:
                         for size in [1, 2]:    
-                            actions.append([defense,1, element, size])
+                            actions.append((Actions(1), Elements(element), Attack_Level(size), Elements(defense))) 
                     else:
-                        actions.append([defense,1, element, 1])
+                        actions.append((Actions(1), Elements(element), Attack_Level(1), Elements(defense)))  
 
-            #Heal
-            actions.append([defense,2])  
+            # Heal
+            actions.append((Actions(2),Elements(0),Attack_Level(0), Elements(defense))) 
 
-            #Defend
+            # Defend
             for element in [1, 2, 3]:  
-                actions.append([defense,3, element])
+                actions.append((Actions(3), Elements(element),Attack_Level(0), Elements(defense))) 
 
         return actions
+
 
     
     def choose_action(self):
@@ -344,12 +345,12 @@ class AIPlayer:# make a list of oponents moves and uppdate it in battle phase
         # Apply epsilon-greedy policy
         #if np.random.rand() < self.epsilon:
         if 1 < 2:
-            action_index = np.random.choice(actions)
+            action_index = np.random.choice(len(actions))
         else:
             q_values = self.q_table[self.state]
             action_index = max(actions, key=lambda action: q_values[action])  
 
-        return self.q_table[self.state][action_index]
+        self.action = actions[action_index]
           
     
 
