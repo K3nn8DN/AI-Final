@@ -1,5 +1,7 @@
 from Enums import Actions, Elements, Attack_Level
 import numpy as np
+import json
+import ast
 
 
 class Player:
@@ -8,7 +10,11 @@ class Player:
         self.health = 10
         self.energy = 5
         self.action = None,None,None,None
-        
+
+    def reset(self):
+        self.health = 10
+        self.energy = 5
+        self.action = None,None,None,None
 
     def choose_action(self):
         # Prompt player for their choice of action
@@ -83,14 +89,16 @@ class Player:
 class AIPlayer:
     def __init__(self, name, learning_rate=0.1, factor=0.95, epsilon=0.1):
         self.player = Player(name)
-        self.state_size = 4356
-        self.action_size=30
         self.q_table = {}
         self.learning_rate=learning_rate
         self.factor=factor
         self.epsilon=epsilon
         self.game=None
         self.state =None
+
+    def reset(self):
+        self.load_q_table()
+        self.player.reset()
 
     def take_damage(self, amount):
         self.player.take_damage(amount)
@@ -108,18 +116,15 @@ class AIPlayer:
         return self.player.get_state()
 
     def get_actions(self):
-        return self.action
+        return self.action[0]
     
     def get_name(self):
         return self.player.get_name()
     
     def set_game(self, game):
         self.game = game
-    
 
-    def fit(self,action,reward, next_state, state=0,):
-        if state != 0:
-            self.state = state
+    
 
     def generate_actions(self, energy=5):
         actions = []
@@ -165,12 +170,62 @@ class AIPlayer:
             action_index = 0
             best_q_value = q_values[0]
 
-            for i in range(self.action_size):  
+            for i in range(len(actions)):  
                 if q_values[i] > best_q_value:
                     best_q_value = q_values[i]
                     action_index = i
 
 
-        self.action = actions[action_index]
+        self.action = actions[action_index], action_index
+
+
+
+    def fit(self,reward,next_state=-1,actionindex=-1, state=-1,):
+        if state == -1:
+            state = self.state 
+        if actionindex == -1:
+            actionindex = self.action[1]
+        if next_state == -1:
+            next_state = (*self.get_state(), *self.game.get_state(self.player))
+        
+        # Find the best Q-value for the next state or initialize as 0
+        best_next_q_value = max(self.q_table.get(next_state, [0,0]))  
+
+        td_target = reward + self.factor * best_next_q_value
+        td_error = td_target - self.q_table[state][actionindex]
+        self.q_table[state][actionindex] += self.learning_rate * td_error
+
+
+
+
+    def save_q_table(self):
+        filename=self.get_name() +"_q_table.json"
+        with open(filename, "w") as f:
+            items = []
+            for k, v in self.q_table.items():
+                k_str = str(k)                  
+                v_str = json.dumps(v)           
+                line = f'  "{k_str}": {v_str}'  
+                items.append(line)
+            f.write("{\n" + ",\n".join(items) + "\n}")
+        
+
+    def load_q_table(self):
+        filename=self.get_name() +"_q_table.json"
+        try:
+            with open(filename, "r") as json_file:
+                q_table_from_file = json.load(json_file)
+
+            q_table_loaded = {}  
+
+            for state_str, q_values in q_table_from_file.items():
+                state_tuple = ast.literal_eval(state_str)
+                q_table_loaded[state_tuple] = q_values
+
+            self.q_table = q_table_loaded
+
+        except FileNotFoundError:
+            print(f"No saved Q-table found at {filename}. Starting with an empty table.")
+
           
     
