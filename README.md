@@ -41,7 +41,7 @@ Each turn, choose **1 action** and **1 defense element**.
 | Small Attack | 1 ⚡         | Deals **2** damage if successful        |
 | Big Attack   | 3 ⚡         | Deals **4** damage if successful        |
 | Block        | 0 ⚡         | Choose **2 elements** to defend with    |
-| Heal         | 0 ⚡         | Restore **1** health (cannot exceed 10) |
+| Heal         | 0 ⚡         | Restore **2** health (cannot exceed 10) |
 
 ---
 
@@ -49,8 +49,7 @@ Each turn, choose **1 action** and **1 defense element**.
 
 | Defense vs Attack Match | Effect            |
 | ----------------------- | ----------------- |
-| Same Element            | Full damage taken |
-| Weaker Element          | Full damage taken |
+| Same/Weaker Element     | Full damage taken |
 | Stronger Element        | 50% damage taken  |
 
 
