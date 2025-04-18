@@ -63,24 +63,15 @@ class Game:
         p2_health= self.player2.get_health()
         if p1_health == 0 and p2_health ==0:
             print("gameover tie")
-            self.player1.fit(50)
-            self.player2.fit(50)
-            self.player1.save_q_table()
-            self.player2.save_q_table()
+            self.winner ="tie"
             return 1
         elif p1_health == 0:
-            self.player1.fit(-100)
-            self.player2.fit(100)
-            self.player1.save_q_table()
-            self.player2.save_q_table()
-            print("gameover p2 wins")
+            print("gameover " + self.player2.get_name()+" wins")
+            self.winner ="player_2"
             return 1
         elif p2_health == 0:
-            self.player1.fit(100)
-            self.player2.fit(-100)
-            self.player1.save_q_table()
-            self.player2.save_q_table()
-            print("gameover p1 wins")
+            print("gameover " + self.player1.get_name()+" wins")
+            self.winner ="player_1"
             return 1
         else: return 0
 
@@ -119,7 +110,7 @@ class Game:
         
         #get health and check winner
         if self.is_game_over():
-            return
+            return self.winner
 
 
         self.player1.update_energy(p1_level.energy())
@@ -134,22 +125,18 @@ class Game:
             p2_health= self.player2.get_health()
             print(f"{self.player2.get_name()} heals. Health now {p2_health}.")
 
-        self.player1.fit(-1)
-        self.player2.fit(-1)
-
         self.choose()
 
 
 def main():
-    ai = AIPlayer("AI Bob")
-    ai2 = AIPlayer("AI cat")
-    player = Player("Bob")
-    player2= Player("cat")
-    game = Game(ai, ai2)  
+    ai = AIPlayer("art")
+    player = Player("player")
+    player2= Player("player2")
+    game = Game(player, ai)  
     ai.set_game(game)
-    ai2.set_game(game)
+    game.start()
 
-    for _ in range(1000):game.start()
+
 
 
 if __name__ == "__main__":

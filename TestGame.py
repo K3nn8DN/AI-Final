@@ -1,5 +1,5 @@
 from Enums import Actions, Elements
-from Player import Player, AIPlayer
+from Player import  AIPlayer
 import math
 
 class WinCount:
@@ -19,6 +19,12 @@ class WinCount:
     @classmethod
     def return_wins(cls):
         print(f"p1_wins = {cls.player1_win} | p2_wins = {cls.player2_win} | Ties = {cls.tie}")
+
+    @classmethod
+    def reset_wins(cls):
+        cls.player1_win = 0
+        cls.player2_win = 0
+        cls.tie = 0
 
 
 
@@ -87,8 +93,6 @@ class Game:
         self.player2.take_damage(p1_attack)
         p2_attack = math.floor(p2_level.damage() / p2_element.attacks(p1_defense)) / p2_element.attacks(p1_block)
         self.player1.take_damage(p2_attack)
-
-        attacks= "Damage",p1_attack, p2_attack
         
         #get health and check winner
         if self.is_game_over():
@@ -112,14 +116,32 @@ class Game:
 
 
 def main():
-    ai = AIPlayer("Bob",learning_rate=0.1, factor=0.95, epsilon=0.1)
-    ai2 = AIPlayer("cat",learning_rate=0.1, factor=0.95, epsilon=0.1)
-    game = Game(ai, ai2)  
-    ai.set_game(game)
-    ai2.set_game(game)
+    ai3 = AIPlayer("dog", learning_rate=0.1, factor=0.95, epsilon=0.6)  
+    ai6 = AIPlayer("art", learning_rate=0.3, factor=0.88, epsilon=0.4) 
+    ai1 = AIPlayer("Bob", learning_rate=0.1, factor=0.99, epsilon=0.1)  
 
-    for _ in range(1000):game.start()
-    WinCount.return_wins()
+
+    game1 = Game(ai1, ai3)
+    game2 = Game(ai1, ai6)
+    game3 = Game(ai3, ai6)
+
+    # Play the games
+    games = [game1, game2, game3]
+
+    for game in games:
+        # Set the game for both players
+        game.player1.set_game(game)
+        game.player2.set_game(game)
+        print(game.player1.get_name() + " vs " + game.player2.get_name())
+
+
+        # Play 1000 games
+        for _ in range(1000):
+            game.start()
+
+        # After 1000 games, print the win counts
+        WinCount.return_wins()
+        WinCount.reset_wins()
 
 
 if __name__ == "__main__":

@@ -23,6 +23,11 @@ block_ice = ["3", "2"]
 block_water = ["3", "3"]
 
 class TestWin(unittest.TestCase):
+
+    def setUp(self):
+        # This runs before each test method
+        self.data = [1, 2, 3]
+        
     @patch('builtins.input', side_effect= fire + big_fire+
                                           ice +block_ice+
                                           fire + big_fire+

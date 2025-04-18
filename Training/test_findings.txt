@@ -1,0 +1,15 @@
+first the only difference was epsilon .1 - .6 the best performing were .1 in first  .6 in second and .4 in third
+
+the second test was between discount factors .99 and .88 since .95 was already done 
+the winner was .1 with .99 the runner up was .4 with .88 then lastly .1 with .88 
+since .1 is already known to be good i dropped the last one leaving the top two 
+
+the third test was between learning rate .1 .2 and .3
+.1 is the same as the previouse winner so this should thin out the competition in the next test making one less test to do later
+
+
+2 winners from 3rd vs 
+
+.95s and 2 winners from 2nd
+
+
