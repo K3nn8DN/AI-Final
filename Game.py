@@ -12,7 +12,7 @@ class Game:
         print("Game started!")
         self.player1.reset()
         self.player2.reset()
-        self.choose()
+        return self.choose()
 
     def get_state(self, player):
         if player == self.player1:
@@ -83,7 +83,7 @@ class Game:
         self.player1.choose_action()
         self.display("line")
         self.player2.choose_action()
-        self.battle()
+        return self.battle()
 
     def battle(self):
         print("Battle phase!") 
@@ -125,13 +125,12 @@ class Game:
             p2_health= self.player2.get_health()
             print(f"{self.player2.get_name()} heals. Health now {p2_health}.")
 
-        self.choose()
+        return self.choose()
 
 
 def main():
     ai = AIPlayer("art")
     player = Player("player")
-    player2= Player("player2")
     game = Game(player, ai)  
     ai.set_game(game)
     game.start()
