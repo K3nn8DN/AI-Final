@@ -152,8 +152,7 @@ class AIPlayer:
     
     def choose_action(self):
         health, energy = self.get_state()
-        opponent_health, opponent_energy = self.game.get_state(self.player)
-        self.state = (health, energy, opponent_health, opponent_energy)
+        self.state = (health, energy, *self.game.get_state(self.player))
         actions = self.generate_actions(energy)
 
 
@@ -226,6 +225,37 @@ class AIPlayer:
 
         except FileNotFoundError:
             print(f"No saved Q-table found at {filename}. Starting with an empty table.")
+
+
+
+class EasyAIPlayer(AIPlayer):
+    def choose_action(self):
+        health, energy = self.get_state()
+        self.state = (health, energy)
+        actions = self.generate_actions(energy)
+
+
+        # Initialize Q-values if they don't exist for the current state
+        if self.state not in self.q_table:
+            self.q_table[self.state] = [0] * len(actions)  
+
+
+        # Apply epsilon-greedy policy
+        if np.random.rand() < self.epsilon:
+            action_index = np.random.choice(len(actions))
+        else:
+            q_values = self.q_table[self.state]
+            action_index = 0
+            best_q_value = q_values[0]
+
+            for i in range(len(actions)):  
+                if q_values[i] > best_q_value:
+                    best_q_value = q_values[i]
+                    action_index = i
+
+
+        self.action = actions[action_index], action_index
+
 
           
     

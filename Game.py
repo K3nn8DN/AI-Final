@@ -1,5 +1,5 @@
 from Enums import Actions, Elements
-from Player import Player, AIPlayer
+from Player import Player, AIPlayer, EasyAIPlayer
 import math
 
 
@@ -130,8 +130,9 @@ class Game:
 
 def main():
     ai = AIPlayer("art")
+    ai2 = EasyAIPlayer("easymode")
     player = Player("player")
-    game = Game(player, ai)  
+    game = Game(player, ai2)  
     ai.set_game(game)
     game.start()
 

@@ -2,7 +2,7 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from  Enums import Actions, Elements
-from Player import  AIPlayer
+from Player import  AIPlayer, EasyAIPlayer
 import math
 
 
@@ -120,9 +120,9 @@ class Game:
 
 
 def main():
-    ai3 = AIPlayer("nnn", learning_rate=0.1, factor=0.95, epsilon=0.6)  
-    ai6 = AIPlayer("fff", learning_rate=0.3, factor=0.88, epsilon=0.4) 
-    ai1 = AIPlayer("sss", learning_rate=0.1, factor=0.99, epsilon=0.1)  
+    ai3 = EasyAIPlayer("easymode", learning_rate=0.1, factor=0.95, epsilon=0.6)  
+    ai6 = EasyAIPlayer("easymode2", learning_rate=0.3, factor=0.88, epsilon=0.4) 
+    ai1 = AIPlayer("test", learning_rate=0.1, factor=0.99, epsilon=0.1)  
 
 
     game1 = Game(ai1, ai3)
