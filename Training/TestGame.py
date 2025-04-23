@@ -120,17 +120,20 @@ class Game:
 
 
 def main():
-    ai3 = EasyAIPlayer("easymode", learning_rate=0.1, factor=0.95, epsilon=0.6)  
-    ai6 = EasyAIPlayer("easymode2", learning_rate=0.3, factor=0.88, epsilon=0.4) 
-    ai1 = AIPlayer("test", learning_rate=0.1, factor=0.99, epsilon=0.1)  
+    import matplotlib.pyplot as plt
+    ai3_win_rates = []
+
+    ai1 = AIPlayer("bob")  
+    ai2 = EasyAIPlayer("easymode", learning_rate=0.3, factor=0.88, epsilon=0.4) 
+    ai3 = AIPlayer("five", learning_rate=0.1, factor=0.99, epsilon=0.1)  
 
 
-    game1 = Game(ai1, ai3)
-    game2 = Game(ai1, ai6)
-    game3 = Game(ai3, ai6)
+    game1 = Game(ai3, ai2)
+    game2 = Game(ai2, ai3)
+    game3 = Game(ai2, ai3)
 
     # Play the games
-    games = [game1, game2, game3]
+    games = [game1]
 
     for game in games:
         # Set the game for both players
@@ -140,12 +143,28 @@ def main():
 
 
         # Play 1000 games
-        for _ in range(1000):
+        for i in range(1000):
             game.start()
+
+            # Log win rate every 50 games
+            if i % 50 == 49:
+                total = WinCount.player1_win + WinCount.player2_win + WinCount.tie
+                if total > 0:
+                    win_rate = WinCount.player2_win / total
+                    ai3_win_rates.append(win_rate)
 
         # After 1000 games, print the win counts
         WinCount.return_wins()
         WinCount.reset_wins()
+
+        plt.plot([i * 50 for i in range(len(ai3_win_rates))], ai3_win_rates, label="ai3 win rate")
+        plt.xlabel("Episodes")
+        plt.ylabel("Win Rate (of EasyAI)")
+        plt.ylim(0, 1)
+        plt.title("EasyAI Win Rate Over Time")
+        plt.grid(True)
+        plt.legend()
+        plt.show()
 
 
 if __name__ == "__main__":
